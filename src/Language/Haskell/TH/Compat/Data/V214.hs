@@ -3,7 +3,7 @@ module Language.Haskell.TH.Compat.Data.V214 (
   newtypeD', unNewtypeD,
   dataInstD', unDataInstD,
   newtypeInstD', unNewtypeInstD,
-  unInstanceD,
+  unInstanceD, tyVarBndrName
   ) where
 
 import Language.Haskell.TH
@@ -71,3 +71,8 @@ unNewtypeInstD  _                              = Nothing
 unInstanceD :: Dec -> Maybe (Cxt, Type, [Dec])
 unInstanceD (InstanceD _ cxt ty decs) = Just (cxt, ty, decs)
 unInstanceD  _                        = Nothing
+
+-- | Compatible interface to extract the type variable name from a 'TyVarBndr'
+tyVarBndrName :: TyVarBndr -> Name
+tyVarBndrName (PlainTV n) = n
+tyVarBndrName (KindedTV n _) = n
