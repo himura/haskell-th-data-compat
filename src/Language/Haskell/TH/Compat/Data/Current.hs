@@ -3,12 +3,12 @@ module Language.Haskell.TH.Compat.Data.Current (
   newtypeD', unNewtypeD,
   dataInstD', unDataInstD,
   newtypeInstD', unNewtypeInstD,
-  unInstanceD, tyVarBndrName
+  unInstanceD, plainTVSpec, tyVarBndrName
   ) where
 
 import Language.Haskell.TH
   (CxtQ, ConQ, TypeQ, DecQ,
-   Cxt, Con, Type, Name, TyVarBndr (..), Kind,
+   Cxt, Con, Type, Name, TyVarBndr (PlainTV, KindedTV), Specificity (SpecifiedSpec), Kind,
    Dec (DataD, NewtypeD, DataInstD, NewtypeInstD, InstanceD),
    DerivClauseQ, DerivClause (..), Pred,
    dataD, newtypeD, dataInstD, newtypeInstD, derivClause, conT)
@@ -68,6 +68,10 @@ unNewtypeInstD  _                              = Nothing
 unInstanceD :: Dec -> Maybe (Cxt, Type, [Dec])
 unInstanceD (InstanceD _ cxt ty decs) = Just (cxt, ty, decs)
 unInstanceD  _                        = Nothing
+
+-- | Construct a 'PlainTV' with a 'SpecifiedSpec' (template-haskell-2.17)
+plainTVSpec :: Name -> TyVarBndr Specificity
+plainTVSpec n = PlainTV n SpecifiedSpec
 
 -- | Compatible interface to extract the type variable name from a 'TyVarBndr'
 tyVarBndrName :: TyVarBndr flag -> Name
